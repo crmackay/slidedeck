@@ -7,6 +7,7 @@ import codecs
 import re
 import jinja2
 import markdown
+from slidedeck.mdx_mathjax import MathJaxExtension
 
 #############################################################################
 # Globals
@@ -56,7 +57,7 @@ def render_slides(md, template_fn):
         remainder_index = metadata and 1 or 0
         # Get the content from the rest of the slide.
         content_section = '\n\n'.join(sections[remainder_index:])
-        html = markdown.markdown(content_section)
+        html = markdown.markdown(content_section, extensions=[MathJaxExtension()])
         slide['content'] = postprocess_html(html, metadata)
 
         slides.append(slide)
@@ -106,7 +107,7 @@ def parse_deck_settings(md):
             m = re.search(value, md, re.MULTILINE)
             if m:
                 settings[key].append(m.group(1))
-                md = re.sub(m.group(0), '', md, re.MULTILINE)
+                md = md.replace(m.group(0), '')
             else:
                 found = False
 
